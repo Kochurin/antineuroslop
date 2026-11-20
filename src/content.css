@@ -1,0 +1,18 @@
+/* Подсветка в contenteditable через CSS Custom Highlight API: DOM страницы не меняется */
+::highlight(antislop) {
+  background-color: rgba(245, 158, 11, 0.18);
+  text-decoration: underline wavy rgba(217, 119, 6, 0.9);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+::highlight(antislop-strong) {
+  background-color: rgba(229, 72, 77, 0.16);
+  text-decoration: underline wavy rgba(220, 38, 38, 0.95);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+::highlight(antislop-active) {
+  background-color: rgba(229, 72, 77, 0.32);
+}

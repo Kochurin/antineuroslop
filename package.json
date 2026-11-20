@@ -1,0 +1,12 @@
+{
+  "name": "antineuroslop",
+  "version": "1.0.0",
+  "description": "Браузерное расширение: подсвечивает ИИ-штампы и канцелярит в русском тексте",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/",
+    "e2e": "python scripts/e2e.py",
+    "pack": "python scripts/pack.py"
+  }
+}
