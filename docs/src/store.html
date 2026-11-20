@@ -1,0 +1,28 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0}
+body{width:1280px;height:800px;overflow:hidden;font-family:Montserrat,sans-serif;
+ background:radial-gradient(ellipse 60% 70% at 60% 55%,#fbfbfc 0%,#ececee 55%,#dcdcdf 100%);position:relative}
+.t{position:absolute;left:70px;top:0;bottom:0;width:380px;display:flex;flex-direction:column;justify-content:center}
+.k{font-weight:700;font-size:16px;letter-spacing:6px;color:#111}
+h1{margin:14px 0 0;font-weight:900;font-size:50px;line-height:1.02;letter-spacing:-1px;color:#111}
+h1 span{display:block;color:#9b9b9f}
+p{font:600 19px/1.45 Montserrat;color:#6b6b70;margin:22px 0 0}
+.shot{position:absolute;right:60px;top:50%;transform:translateY(-50%);border-radius:18px;box-shadow:0 2px 4px rgba(0,0,0,.05),0 30px 70px rgba(0,0,0,.16);background:#fff}
+</style></head><body>
+<div class="t">
+ <div class="k">АНТИНЕЙРОСЛОП</div>
+ <h1 id="h"></h1>
+ <p id="p"></p>
+</div>
+<img class="shot" id="img">
+<script>
+const q = new URLSearchParams(location.search);
+document.getElementById('h').innerHTML = q.get('h');
+document.getElementById('p').textContent = q.get('p');
+const img = document.getElementById('img');
+img.src = q.get('img');
+img.style.height = q.get('hgt') + 'px';
+</script>
+</body></html>

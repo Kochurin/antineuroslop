@@ -159,6 +159,11 @@ def main():
         score2 = pp.inner_text("#score")
         check(int(score2) > int(score), f"«Почистить простое» подняло оценку: {score} → {score2}")
         pp.click("#clear")
+        check(pp.is_visible("#promo") and "start=antislop" in pp.get_attribute("#promo a", "href"), "блок автора виден, ссылка с меткой antislop")
+        pp.click("#promoClose")
+        pp.reload()
+        pp.wait_for_timeout(300)
+        check(not pp.is_visible("#promo"), "блок автора скрывается и не возвращается после перезапуска")
 
         ctx.close()
     srv.shutdown()

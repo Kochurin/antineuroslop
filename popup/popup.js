@@ -167,8 +167,14 @@
     $('disabledCount').textContent = n;
   }
 
-  get(['enabled', 'disabledRules', 'disabledSites', 'draft']).then(function (v) {
+  $('promoClose').addEventListener('click', function () {
+    $('promo').hidden = true;
+    set({ promoHidden: true });
+  });
+
+  get(['enabled', 'disabledRules', 'disabledSites', 'draft', 'promoHidden']).then(function (v) {
     v = v || {};
+    $('promo').hidden = !!v.promoHidden;
     state.enabled = v.enabled !== false;
     state.disabledRules = v.disabledRules || {};
     state.disabledSites = v.disabledSites || {};

@@ -128,6 +128,15 @@ button:disabled { opacity: .4; cursor: default; }
 .empty { color: var(--mute); padding: 4px 2px; }
 .empty p { margin: 10px 0; }
 
+.promo { position: relative; margin: 4px 14px 2px; padding: 10px 30px 10px 12px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.promo[hidden] { display: none; }
+.promo small { color: #8a8a90; font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.promo p { margin: 3px 0 6px; color: #3a3a40; }
+.promo a { color: var(--ink); font-weight: 600; margin-right: 12px; text-decoration: none; border-bottom: 1px solid #cfcfd4; }
+.promo a:hover { border-color: var(--ink); }
+.promo .x { position: absolute; right: 6px; top: 4px; border: 0; background: none; color: #9b9ba3; font-size: 16px; line-height: 1; padding: 4px; }
+.promo .x:hover { color: var(--ink); }
+
 footer { display: flex; gap: 6px; align-items: center; padding: 8px 14px 12px; color: var(--mute); font-size: 11px; flex-wrap: wrap; }
 footer a { margin-left: auto; color: var(--mute); }
 footer a:hover { color: var(--ink); }
