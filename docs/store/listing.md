@@ -1,6 +1,6 @@
 # Тексты для магазинов расширений
 
-Архив: `python scripts/pack.py` → `dist/antineuroslop-1.1.0.zip`
+Архив: `python scripts/pack.py` → `dist/antineuroslop-1.1.1.zip`
 Картинки: `docs/store/1-pole.png`, `2-chat.png`, `3-razbor.png` (1280×800), `tile-440x280.png`, иконка `icons/icon128.png`
 Политика конфиденциальности: https://github.com/Kochurin/antineuroslop/blob/main/PRIVACY.md
 Сайт и поддержка: https://github.com/Kochurin/antineuroslop

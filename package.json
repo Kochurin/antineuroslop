@@ -1,6 +1,6 @@
 {
   "name": "antineuroslop",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Браузерное расширение: подсвечивает ИИ-штампы и канцелярит в русском тексте",
   "private": true,
   "license": "MIT",

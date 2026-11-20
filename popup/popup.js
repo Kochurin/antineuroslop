@@ -19,7 +19,24 @@
   }
   function set(obj) { try { store().set(obj); } catch (e) {} }
 
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  // Элемент из тега, атрибутов и детей (строки становятся текстом, без innerHTML)
+  function h(tag, attrs, kids) {
+    var el = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      if (k === 'class') el.className = attrs[k];
+      else if (k.slice(0, 5) === 'data-') el.dataset[k.slice(5)] = attrs[k];
+      else el.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) {
+      if (c == null || c === false) return;
+      el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+    });
+    return el;
+  }
+  function fill(el, kids) {
+    el.textContent = '';
+    kids.forEach(function (c) { if (c == null) return; el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+  }
 
   function run() {
     var text = ta.value;
@@ -42,31 +59,35 @@
     $('autofix').disabled = !res.matches.some(function (m) { return m.fixes.length; });
 
     // Текст с подсветкой
-    var html = '', pos = 0;
+    var prev = [], pos = 0;
     res.matches.forEach(function (m, i) {
-      html += esc(text.slice(pos, m.start));
-      html += '<mark data-i="' + i + '" class="' + (m.weight >= 2 ? 's' : '') + (state.active === i ? ' on' : '') + '" title="' + esc(m.title) + '">' + esc(text.slice(m.start, m.end)) + '</mark>';
+      prev.push(text.slice(pos, m.start));
+      prev.push(h('mark', { 'data-i': String(i), class: (m.weight >= 2 ? 's' : '') + (state.active === i ? ' on' : ''), title: m.title }, [text.slice(m.start, m.end)]));
       pos = m.end;
     });
-    html += esc(text.slice(pos));
-    $('preview').innerHTML = html;
+    prev.push(text.slice(pos));
+    fill($('preview'), prev);
 
     // Список
     var list = res.notes.map(function (nt) {
-      return '<li class="note"><div class="top"><span class="cat">' + esc(nt.cat) + '</span><span class="t">' + esc(nt.title) + '</span></div><div class="w">' + esc(nt.why) + '</div></li>';
+      return h('li', { class: 'note' }, [
+        h('div', { class: 'top' }, [h('span', { class: 'cat' }, [nt.cat]), h('span', { class: 't' }, [nt.title])]),
+        h('div', { class: 'w' }, [nt.why])
+      ]);
     });
     res.matches.forEach(function (m, i) {
       var fx = m.fixes.map(function (f, k) {
-        return '<button data-i="' + i + '" data-f="' + k + '">' + esc(fixLabel(m, f, k)) + '</button>';
-      }).join('');
-      list.push('<li data-i="' + i + '" class="' + (state.active === i ? 'on' : '') + '">' +
-        '<div class="top"><span class="cat">' + esc(m.cat) + '</span><span class="t">' + esc(m.title) + '</span></div>' +
-        '<q>' + esc(m.text.trim() || m.text) + '</q>' +
-        '<div class="w">' + esc(m.why) + '</div>' +
-        (m.hint ? '<div class="h">' + esc(m.hint) + '</div>' : '') +
-        (fx ? '<div class="fx">' + fx + '</div>' : '') + '</li>');
+        return h('button', { 'data-i': String(i), 'data-f': String(k) }, [fixLabel(m, f, k)]);
+      });
+      list.push(h('li', { 'data-i': String(i), class: state.active === i ? 'on' : '' }, [
+        h('div', { class: 'top' }, [h('span', { class: 'cat' }, [m.cat]), h('span', { class: 't' }, [m.title])]),
+        h('q', {}, [m.text.trim() || m.text]),
+        h('div', { class: 'w' }, [m.why]),
+        m.hint ? h('div', { class: 'h' }, [m.hint]) : null,
+        fx.length ? h('div', { class: 'fx' }, fx) : null
+      ]));
     });
-    $('list').innerHTML = list.join('');
+    fill($('list'), list);
   }
 
   function fixLabel(m, f, k) {

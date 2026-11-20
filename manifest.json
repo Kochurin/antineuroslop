@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Антинейрослоп",
   "short_name": "Антинейрослоп",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Подсвечивает ИИ-штампы и канцелярит в русском тексте прямо в поле ввода. Работает локально, текст никуда не уходит",
   "icons": {
     "16": "icons/icon16.png",
@@ -18,12 +18,23 @@
       "32": "icons/icon32.png"
     }
   },
-  "permissions": ["storage", "activeTab"],
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["src/rules.js", "src/engine.js", "src/content.js"],
-      "css": ["src/content.css"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/rules.js",
+        "src/engine.js",
+        "src/content.js"
+      ],
+      "css": [
+        "src/content.css"
+      ],
       "run_at": "document_idle",
       "all_frames": true,
       "match_about_blank": true
@@ -32,10 +43,15 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "antineuroslop@kochurin.github.io",
-      "strict_min_version": "128.0",
+      "strict_min_version": "140.0",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
     }
   }
 }

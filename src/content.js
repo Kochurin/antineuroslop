@@ -47,7 +47,8 @@
   var rootHost = document.createElement('antislop-root');
   rootHost.style.cssText = 'all:initial;position:fixed;left:0;top:0;width:0;height:0;z-index:2147483646;pointer-events:none;';
   var shadow = rootHost.attachShadow({ mode: 'open' });
-  shadow.innerHTML = '<style>' + [
+  var styleEl = document.createElement('style');
+  styleEl.textContent = [
     ':host{all:initial}',
     '.mirror{position:fixed;overflow:hidden;pointer-events:none;color:transparent!important;background:transparent!important;border-color:transparent!important;box-sizing:border-box;margin:0}',
     '.mirror mark{color:transparent;background:rgba(245,158,11,.18);text-decoration:underline wavy rgba(217,119,6,.9);text-decoration-thickness:1.5px;text-underline-offset:3px;border-radius:2px;padding:0;margin:0}',
@@ -72,10 +73,14 @@
     '.pop .nav{margin-left:auto;color:#8a8a90;font-size:12px;display:flex;gap:8px;align-items:center}',
     '.pop .nav button{border:0;background:none;padding:0 2px;color:#6b6b70;font-size:14px}',
     '.pop s{color:#8a8a90}'
-  ].join('') + '</style><div class="mirror" hidden></div><div class="badge" hidden><i></i><span></span></div><div class="pop" hidden></div>';
-  var mirror = shadow.querySelector('.mirror');
-  var badge = shadow.querySelector('.badge');
-  var pop = shadow.querySelector('.pop');
+  ].join('');
+  function box(cls) { var d = document.createElement('div'); d.className = cls; d.hidden = true; return d; }
+  var mirror = box('mirror');
+  var badge = box('badge');
+  badge.appendChild(document.createElement('i'));
+  badge.appendChild(document.createElement('span'));
+  var pop = box('pop');
+  [styleEl, mirror, badge, pop].forEach(function (n) { shadow.appendChild(n); });
   function mount() { if (!rootHost.isConnected) (document.body || document.documentElement).appendChild(rootHost); }
 
   // ---------- Поиск редактора ----------
@@ -257,7 +262,21 @@
   }
 
   // ---------- Подсказка ----------
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  // Элемент из тега, атрибутов и детей (строки становятся текстом, без innerHTML)
+  function h(tag, attrs, kids) {
+    var el = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      if (k === 'class') el.className = attrs[k];
+      else if (k.slice(0, 5) === 'data-') el.dataset[k.slice(5)] = attrs[k];
+      else el.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) {
+      if (c == null || c === false) return;
+      el.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c);
+    });
+    return el;
+  }
+  function fill(el, kids) { el.textContent = ''; kids.forEach(function (c) { if (c) el.appendChild(c); }); }
 
   function openPop(i) {
     if (!cur || !cur.res) return;
@@ -265,7 +284,7 @@
     if (!ms.length) {
       if (cur.res.notes.length) {
         var n = cur.res.notes[0];
-        pop.innerHTML = '<div class="cat">' + esc(n.cat) + '</div><div class="t">' + esc(n.title) + '</div><div class="w">' + esc(n.why) + '</div>';
+        fill(pop, [h('div', { class: 'cat' }, [n.cat]), h('div', { class: 't' }, [n.title]), h('div', { class: 'w' }, [n.why])]);
         cur.activeIdx = null; pop.hidden = false; placePopAt(cur.el.getBoundingClientRect(), true);
       }
       return;
@@ -274,19 +293,27 @@
     var m = ms[i];
     cur.activeIdx = i;
     var fixes = m.fixes.map(function (f, k) {
-      var label = f === '' ? 'Удалить «' + esc(short(m.text)) + '»' : (f.trim() === '' ? 'Убрать' : esc(f.trim() === ',' ? 'запятая' : f.trim() === '.' ? 'точка' : f.trim() === ':' ? 'двоеточие' : f));
+      var label = f === '' ? 'Удалить «' + short(m.text) + '»' : (f.trim() === '' ? 'Убрать' : f);
       if (m.rule === 'em-dash') label = ['Запятая', 'Точка', 'Двоеточие', '«это»'][k] || label;
       if (m.rule === 'final-period') label = 'Убрать точку';
-      return '<button data-f="' + k + '" class="' + (k === 0 ? 'p' : '') + '">' + label + '</button>';
-    }).join('');
-    pop.innerHTML =
-      '<div class="cat">' + esc(m.cat) + '</div>' +
-      '<div class="t">' + esc(m.title) + '</div>' +
-      '<div class="w">' + esc(m.why) + '</div>' +
-      (m.hint ? '<div class="h">' + esc(m.hint) + '</div>' : '') +
-      (fixes ? '<div class="fx">' + fixes + '</div>' : '') +
-      '<div class="ft"><button data-a="skip">Пропустить</button><button data-a="off">Не искать такое</button>' +
-      '<span class="nav"><button data-a="prev" title="Предыдущий">‹</button>' + (i + 1) + ' из ' + ms.length + '<button data-a="next" title="Следующий">›</button></span></div>';
+      return h('button', { 'data-f': String(k), class: k === 0 ? 'p' : '' }, [label]);
+    });
+    fill(pop, [
+      h('div', { class: 'cat' }, [m.cat]),
+      h('div', { class: 't' }, [m.title]),
+      h('div', { class: 'w' }, [m.why]),
+      m.hint ? h('div', { class: 'h' }, [m.hint]) : null,
+      fixes.length ? h('div', { class: 'fx' }, fixes) : null,
+      h('div', { class: 'ft' }, [
+        h('button', { 'data-a': 'skip' }, ['Пропустить']),
+        h('button', { 'data-a': 'off' }, ['Не искать такое']),
+        h('span', { class: 'nav' }, [
+          h('button', { 'data-a': 'prev', title: 'Предыдущий' }, ['‹']),
+          (i + 1) + ' из ' + ms.length,
+          h('button', { 'data-a': 'next', title: 'Следующий' }, ['›'])
+        ])
+      ])
+    ]);
     pop.hidden = false;
     if (isField(cur.el)) renderMirror(); else renderHighlights();
     revealMatch(m);
