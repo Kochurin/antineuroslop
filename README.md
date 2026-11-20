@@ -23,18 +23,18 @@
 
 ## Установка
 
-Расширения пока нет в магазинах, его ставят из папки
+В каталог дополнений Firefox расширение отправлено и ждёт проверки Mozilla. В Chrome Web Store его пока нет, поэтому в Chrome его ставят из папки
 
 **Chrome, Яндекс Браузер, Edge, Opera**
 
-1. Скачайте репозиторий: зелёная кнопка Code → Download ZIP, и распакуйте
+1. Скачайте `antineuroslop-1.1.1.zip` со [страницы релизов](https://github.com/Kochurin/antineuroslop/releases/latest) и распакуйте в отдельную папку
 2. Откройте `chrome://extensions` и включите «Режим разработчика» в правом верхнем углу
 3. Нажмите «Загрузить распакованное» и выберите папку с файлом `manifest.json`
 
 **Firefox 140 и новее**
 
 1. Откройте `about:debugging#/runtime/this-firefox`
-2. «Загрузить временное дополнение» → выберите `manifest.json`
+2. «Загрузить временное дополнение» → выберите скачанный zip или `manifest.json` из папки
 
 Firefox держит такое дополнение до перезапуска браузера
 
@@ -109,6 +109,6 @@ MIT
 
 Everything runs locally in the tab. There is no server and no analytics
 
-Install: clone the repo, open `chrome://extensions`, enable Developer mode and load the folder unpacked. In Firefox use `about:debugging` → Load Temporary Add-on
+Install: download the zip from Releases, unzip it, open `chrome://extensions`, enable Developer mode and load the folder unpacked. In Firefox use `about:debugging` → Load Temporary Add-on
 
 The rules cover Russian equivalents of patterns such as "it's not X, it's Y", "let's dive in", "it's worth noting", "plays a crucial role", reflexive triplets, em dashes, trailing periods on short lines and uniform sentence rhythm. Each rule has positive and negative test examples in `tests/rules.test.js`
